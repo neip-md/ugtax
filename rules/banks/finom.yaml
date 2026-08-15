@@ -1,0 +1,15 @@
+# Finom business banking. English headers, separate debit/credit columns are
+# flattened by the exporter into a single signed Amount.
+id: finom
+name: Finom
+detect:
+  headers_include: ["Date", "Counterparty", "Amount", "Payment details"]
+column_map:
+  date: Date
+  amount: Amount
+  counterparty: Counterparty
+  reference: "Payment details"
+  direction: null
+delimiter: ","
+date_formats: ["%d/%m/%Y", "%Y-%m-%d"]
+fixture: tests/fixtures/banks/finom_sample.csv

@@ -1,0 +1,14 @@
+# Commerzbank. German headers but a different set to Sparkasse.
+id: commerzbank
+name: Commerzbank
+detect:
+  headers_include: ["Buchungstag", "Buchungstext", "Betrag", "Währung"]
+column_map:
+  date: Buchungstag
+  amount: Betrag
+  counterparty: Buchungstext
+  reference: Buchungstext
+  direction: null
+delimiter: ";"
+date_formats: ["%d.%m.%Y"]
+fixture: tests/fixtures/banks/commerzbank_sample.csv

@@ -1,0 +1,35 @@
+# UGtax — Self-hosted deployment with ERiC/ELSTER submission
+#
+# Usage:
+#   1. Download ERiC SDK from https://www.elster.de/eportal/infoseite/entwickler
+#   2. Extract to ./eric/ (or any directory)
+#   3. Run: docker compose up --build
+#   4. Open http://localhost:4114
+#
+# The web app connects to the submission service automatically.
+# Upload your .pfx certificate in the browser to submit to ELSTER.
+
+services:
+  web:
+    build: .
+    ports:
+      - "4114:3000"
+    environment:
+      - SUBMISSION_SERVICE_URL=http://submit:8000
+    depends_on:
+      submit:
+        condition: service_started
+    restart: unless-stopped
+
+  submit:
+    build:
+      context: .
+      dockerfile: services/submit/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${ERIC_PATH:-./eric}:/opt/eric:ro
+    environment:
+      - ERIC_PATH=/opt/eric
+      - CORS_ORIGINS=http://localhost:4114
+    restart: unless-stopped

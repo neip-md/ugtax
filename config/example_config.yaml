@@ -1,0 +1,67 @@
+# UG Steuertool — Configuration
+#
+# Copy this file and adjust to your UG's specifics.
+
+company:
+  # Legal name as registered
+  name: "Meine Holding UG (haftungsbeschränkt)"
+
+  # Steuernummer from your Finanzamt (not USt-IdNr)
+  steuernummer: "27/123/45678"
+
+  # Your assigned Finanzamt
+  finanzamt: "Berlin Mitte"
+
+  # Fiscal year to process
+  geschaeftsjahr: 2025
+
+  # Are you using Kleinunternehmerregelung (§ 19 UStG)?
+  # true = no VAT charged or reclaimed, simplified USt filing
+  kleinunternehmer: true
+
+  # Stammkapital in EUR (registered share capital)
+  stammkapital: 1000.00
+
+  # Gewinnvortrag or Verlustvortrag from prior year
+  # Positive = Gewinnvortrag, Negative = Verlustvortrag
+  gewinnvortrag: 0.00
+
+# Map counterparty names to SKR04 accounts.
+# The tool checks if the counterparty name CONTAINS the key (case-insensitive).
+# These override built-in rules.
+#
+# Common accounts for a holding UG:
+#   0520  Anteile an verbundenen Unternehmen (Beteiligungen)
+#   0535  Wertpapiere des Anlagevermögens
+#   0540  Ausleihungen an verbundene Unternehmen
+#   6300  Sonstige betriebliche Aufwendungen (catch-all)
+#   6827  Rechts- und Beratungskosten
+#   6830  Sonstige Abgaben (IHK etc.)
+#   6855  Nebenkosten des Geldverkehrs
+#
+# Built-in rules already handle:
+#   - Stammkapitaleinlagen (by reference text)
+#   - Gesellschafterdarlehen (by reference text)
+#   - IHK (by counterparty)
+#   - Bank fees (by reference text)
+#   - Legal fees (by counterparty patterns)
+#   - FX fees (by reference text)
+
+counterparties:
+  "Portfolio Company GmbH":
+    account: "0520"
+    description: "Beteiligung Portfolio Company"
+
+  "Foreign Startup Ltd":
+    account: "0535"
+    description: "Wertpapiere Anlagevermögen"
+
+# Optional: LLM Classification Fallback
+#
+# If some transactions can't be classified by rules or counterparty config,
+# you can provide an Anthropic API key to have an LLM suggest accounts.
+#
+# In the web UI: expand "KI-Klassifizierung" on the upload page.
+# The key is used only for the current session and never stored.
+#
+# Get an API key at: https://console.anthropic.com/

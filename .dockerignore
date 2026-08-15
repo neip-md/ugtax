@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env*.local
+*.pyc
+__pycache__
+.venv
+*.egg-info
+.pytest_cache
+output/
+steuern_*/

@@ -1,0 +1,44 @@
+name: Security scan
+
+# The authoritative leak gate. Local hooks can be bypassed with --no-verify;
+# this job cannot. It runs the same scanner (scripts/repo-guard.sh) that the
+# pre-commit and pre-push hooks use, so there is one set of rules, not three.
+
+# Runs on EVERY branch push, not just main. A branch pushed straight to the
+# remote is visible on GitHub immediately, so it has to be scanned then - waiting
+# for a pull request would leave it unscanned in the meantime.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  repo-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history: the scan covers every commit, not just the tip
+
+      - name: Scan full history for private paths, secrets, and confidential content
+        run: |
+          chmod +x scripts/repo-guard.sh
+          ./scripts/repo-guard.sh --all
+
+      - name: Assert no agent/private state is tracked
+        run: |
+          if git ls-files | grep -qiE '(^\.claude/|^\.gstack/|^\.brain/|^\.wiki/|/memory/|^\.mcp\.json$)'; then
+            echo "::error::agent/private state is tracked in this repo"
+            git ls-files | grep -iE '(^\.claude/|^\.gstack/|^\.brain/|^\.wiki/|/memory/|^\.mcp\.json$)'
+            exit 1
+          fi
+          echo "no agent/private state tracked"
+
+      # A guard that silently stops matching is worse than no guard, so the
+      # scanner's own test suite runs here too.
+      - name: Test the scanner still catches what it claims to
+        run: |
+          chmod +x scripts/test-repo-guard.sh
+          git config user.email "ci@example.com"
+          git config user.name "CI"
+          ./scripts/test-repo-guard.sh

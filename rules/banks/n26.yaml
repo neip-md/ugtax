@@ -1,0 +1,14 @@
+# N26 Business. English headers, ISO dates.
+id: n26
+name: N26 Business
+detect:
+  headers_include: ["Booking Date", "Partner Name", "Amount (EUR)"]
+column_map:
+  date: "Booking Date"
+  amount: "Amount (EUR)"
+  counterparty: "Partner Name"
+  reference: "Payment Reference"
+  direction: null
+delimiter: ","
+date_formats: ["%Y-%m-%d"]
+fixture: tests/fixtures/banks/n26_sample.csv

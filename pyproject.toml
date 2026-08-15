@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ug-steuer"
+version = "0.1.0"
+description = "CLI tool for German UG (haftungsbeschränkt) tax filing — bank export to Bilanz, GuV, and filing guide"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "UG Steuertool Contributors" }]
+dependencies = [
+    "typer>=0.9.0",
+    "openpyxl>=3.1.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+ug-steuer = "ug_steuer.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ug_steuer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["ug_steuer"]
+omit = ["*/__init__.py"]
+
+[tool.coverage.report]
+# A floor, not a target. CI previously ran --cov with no threshold, so coverage
+# could regress to zero without failing the build. Raise this as modules get
+# tests rather than leaving it at the current level forever.
+fail_under = 70
+show_missing = true

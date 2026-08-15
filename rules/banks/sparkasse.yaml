@@ -1,0 +1,14 @@
+# Sparkasse / most German retail banks (also the historical default).
+id: sparkasse
+name: Sparkasse (und viele deutsche Privatbanken)
+detect:
+  headers_include: ["Buchungstag", "Verwendungszweck", "Betrag"]
+column_map:
+  date: Buchungstag
+  amount: Betrag
+  counterparty: "Auftraggeber/Empfänger"
+  reference: Verwendungszweck
+  direction: null          # inferred from the amount sign
+delimiter: ";"
+date_formats: ["%d.%m.%Y"]
+fixture: tests/fixtures/banks/sparkasse_sample.csv

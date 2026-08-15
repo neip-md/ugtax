@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Blocks a commit that stages private paths, secrets, or confidential business
+# content. Delegates all pattern knowledge to scripts/repo-guard.sh.
+#
+# Install:  scripts/install-hooks.sh   (sets core.hooksPath=.githooks)
+# Bypass:   git commit --no-verify     (only for a verified false positive)
+set -uo pipefail
+ROOT=$(git rev-parse --show-toplevel)
+exec "$ROOT/scripts/repo-guard.sh" --staged

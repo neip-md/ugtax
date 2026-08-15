@@ -1,0 +1,16 @@
+company:
+  name: "Muster Ventures UG (haftungsbeschränkt)"
+  steuernummer: "27/123/45678"
+  finanzamt: "Berlin Mitte"
+  geschaeftsjahr: 2025
+  kleinunternehmer: true
+  stammkapital: 1000.00
+  gewinnvortrag: 0.00
+
+counterparties:
+  "Alpha GmbH":
+    account: "0520"
+    description: "Beteiligung Alpha GmbH"
+  "Beta Ltd":
+    account: "0535"
+    description: "Wertpapiere Anlagevermögen (Beta Ltd)"

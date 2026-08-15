@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02">
+  <BkToCstmrStmt>
+    <Stmt>
+      <Id>STMT-2025-001</Id>
+      <Acct>
+        <Id><IBAN>DE89370400440532013000</IBAN></Id>
+        <Ccy>EUR</Ccy>
+      </Acct>
+      <!-- Opening Balance: 0.00 EUR -->
+      <Bal>
+        <Tp><CdOrPrtry><Cd>OPBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="EUR">0.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-01-01</Dt></Dt>
+      </Bal>
+      <!-- Closing Balance: 11485.00 EUR -->
+      <Bal>
+        <Tp><CdOrPrtry><Cd>CLBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="EUR">11485.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2025-12-31</Dt></Dt>
+      </Bal>
+
+      <!-- TX 1: Stammkapitaleinlage 1000 EUR (credit) -->
+      <Ntry>
+        <Amt Ccy="EUR">1000.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <BookgDt><Dt>2025-01-07</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/RCDT/FICT</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Dbtr><Nm>Max Mustermann</Nm></Dbtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Stammkapitaleinlage</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 2: Gesellschafterdarlehen 15000 EUR (credit) -->
+      <Ntry>
+        <Amt Ccy="EUR">15000.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <BookgDt><Dt>2025-01-15</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/RCDT/FICT</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Dbtr><Nm>Max Mustermann</Nm></Dbtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Gesellschafterdarlehen</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 3: Beteiligung Alpha GmbH 3000 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">3000.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-02-10</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/ICDT/STDO</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Alpha GmbH</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Stammkapitaleinlage Alpha GmbH</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 4: IHK Beitrag 150 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">150.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-03-01</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/ICDT/STDO</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>IHK Berlin</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>IHK Beitrag 2025</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 5: Bank fee 15 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">15.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-03-31</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/MCRD/FICT</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Qonto</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Monatliche Gebühr Basic Plan</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 6: Legal fees 250 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">250.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-04-15</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/ICDT/STDO</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Kanzlei Mueller und Partner</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Rechtsberatung Gesellschaftsvertrag</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 7: Another bank fee 15 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">15.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-06-30</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/MCRD/FICT</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Qonto</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Kontoführung Q2</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 8: Beteiligung Beta Ltd 1000 EUR (debit, via config) -->
+      <Ntry>
+        <Amt Ccy="EUR">1000.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-09-01</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/ICDT/STDO</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Beta Ltd</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>Investment Beta Ltd Series A</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+      <!-- TX 9: FX fee 85 EUR (debit) -->
+      <Ntry>
+        <Amt Ccy="EUR">85.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2025-09-01</Dt></BookgDt>
+        <BkTxCd><Prtry><Cd>PMNT/MCRD/FICT</Cd></Prtry></BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <RltdPties>
+              <Cdtr><Nm>Qonto</Nm></Cdtr>
+            </RltdPties>
+            <RmtInf><Ustrd>FX Exchange Fee GBP/EUR</Ustrd></RmtInf>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

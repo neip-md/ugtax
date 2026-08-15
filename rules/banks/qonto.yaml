@@ -1,0 +1,16 @@
+# Qonto business banking. English headers, ISO dates, comma-separated.
+# This is the export that previously missed on every row: the hardcoded
+# DEFAULT_COLUMN_MAP expected German headers.
+id: qonto
+name: Qonto
+detect:
+  headers_include: ["Settlement date", "Counterparty name", "Amount"]
+column_map:
+  date: "Settlement date"
+  amount: Amount
+  counterparty: "Counterparty name"
+  reference: Reference
+  direction: null
+delimiter: ","
+date_formats: ["%Y-%m-%d"]
+fixture: tests/fixtures/banks/qonto_sample.csv

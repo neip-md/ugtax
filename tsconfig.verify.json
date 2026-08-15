@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "components/**/*.tsx",
+    "i18n/**/*.ts",
+    "proxy.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**"
+  ]
+}

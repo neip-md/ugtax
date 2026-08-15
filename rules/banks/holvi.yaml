@@ -1,0 +1,14 @@
+# Holvi. English headers, ISO dates, semicolon-separated.
+id: holvi
+name: Holvi
+detect:
+  headers_include: ["Date", "Counterparty", "Amount", "Message"]
+column_map:
+  date: Date
+  amount: Amount
+  counterparty: Counterparty
+  reference: Message
+  direction: null
+delimiter: ";"
+date_formats: ["%Y-%m-%d"]
+fixture: tests/fixtures/banks/holvi_sample.csv
