@@ -20,7 +20,12 @@ type UnclassifiedItem = {
 };
 
 // Bounded so an oversized or slow request cannot pin a worker indefinitely.
-export const maxDuration = 30;
+//
+// 30s was set when the only models were non-reasoning ones that answered in a
+// few seconds. The current defaults think first, and thinking on a few dozen
+// transactions can run well past that, so the ceiling would have cut off a
+// request the model was still working on. 60s is the Hobby-plan maximum.
+export const maxDuration = 60;
 
 /**
  * Output budget for the classification.

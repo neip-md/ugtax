@@ -35,10 +35,12 @@ export class LlmError extends Error {
 }
 
 /**
- * Below the route's own 30s ceiling, so a slow provider surfaces as a timeout
- * we worded rather than as the platform killing the function.
+ * Below the route's own ceiling, so a slow provider surfaces as a timeout we
+ * worded rather than as the platform killing the function mid-request. The
+ * headroom matters more now that the default models think before answering:
+ * the old 25s was shorter than a reasoning model needs on a full batch.
  */
-const TIMEOUT_MS = 25_000;
+const TIMEOUT_MS = 55_000;
 
 export type LlmCall = {
   provider: ProviderId;
