@@ -99,6 +99,13 @@ Two layers, in priority order:
 
 Anything unmatched goes to a review file for manual classification. Once classified, add those counterparties to your config so they're automatic next year.
 
+The web app adds an optional third layer: if you supply your own API key, it
+asks a model to suggest accounts for whatever the first two layers missed, with
+a confidence level on each suggestion. Anthropic, OpenAI and Google models are
+supported, and any model id can be entered by hand. The key is used for that
+request only and is never stored. Suggestions are proposals, not bookings: you
+confirm each one, and the pre-filing checks run regardless.
+
 ## SKR04 accounts used
 
 | Account | Name | Typical use |

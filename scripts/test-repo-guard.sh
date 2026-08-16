@@ -43,7 +43,13 @@ FAKE_PEM="-----BEGIN RSA $(printf 'PRIVATE')  KEY-----"; FAKE_PEM="${FAKE_PEM/  
 # throwaway list of invented terms instead: that exercises the whole mechanism
 # (file is read, terms are joined, matches are blocked, misses are allowed)
 # without this suite knowing a single real one.
-TERMS_TMP="$(mktemp -t repo-guard-terms)"
+# The XXXXXX is required: GNU mktemp rejects a template without it, while
+# macOS accepts the bare name. Without the template this failed on Linux only,
+# leaving REPO_GUARD_TERMS unset so the layer was inactive and its three cases
+# reported allow instead of block.
+TERMS_TMP="$(mktemp "${TMPDIR:-/tmp}/repo-guard-terms.XXXXXX")" || {
+  echo "cannot create a temporary terms file" >&2; exit 1;
+}
 printf '# synthetic\nZzyzx Holding\nQuux-Mustermann\nPhantasiepreis\n' > "$TERMS_TMP"
 export REPO_GUARD_TERMS="$TERMS_TMP"
 trap 'rm -f "$TERMS_TMP"' EXIT
