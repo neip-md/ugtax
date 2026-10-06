@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { guideMetadata } from "@/app/seo";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({
@@ -9,14 +10,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "jahresabschluss" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-  };
+  return guideMetadata(locale, "/jahresabschluss", t("metaTitle"), t("metaDescription"));
 }
 
 export default async function JahresabschlussPage() {
   const t = await getTranslations("jahresabschluss");
+  const locale = await getLocale();
 
   const requirements = [
     t.rich("req1", { b: (c) => <strong>{c}</strong> }),
@@ -54,6 +53,19 @@ export default async function JahresabschlussPage() {
       <h2 className="text-xl font-semibold">{t("h2Who")}</h2>
       <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{t("whoBody")}</p>
 
+      <section className="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
+        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{locale === "en" ? "Official sources" : "Offizielle Quellen"}</h2>
+        <ul className="space-y-2">
+          <li><a className="underline" href="https://www.gesetze-im-internet.de/ustg_1980/__19.html">§19 UStG</a></li>
+          <li><a className="underline" href="https://www.gesetze-im-internet.de/hgb/__325.html">§325 HGB</a></li>
+          <li><a className="underline" href="https://www.gesetze-im-internet.de/hgb/__267a.html">§267a HGB</a></li>
+        </ul>
+      </section>
+      {locale === "en" && <nav aria-label="Related guides" className="space-y-3">
+        <h2 className="text-xl font-semibold">Next steps</h2>
+        <p><Link href="/ug-tax-filing-checklist" className="underline underline-offset-4">Use the complete UG tax filing checklist</Link></p>
+        <p><Link href="/ug-with-no-revenue" className="underline underline-offset-4">Check the requirements for a UG with no revenue</Link></p>
+      </nav>}
       <div className="pt-4">
         <Link
           href="/app"

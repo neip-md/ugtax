@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { guideMetadata } from "@/app/seo";
+import { EnglishGuide } from "@/components/EnglishGuide";
+import { ebilanzGuide } from "@/content/english-guides";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
@@ -8,14 +11,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  if (locale === "en") return guideMetadata(locale, ebilanzGuide.path, ebilanzGuide.title, ebilanzGuide.description);
   const t = await getTranslations({ locale, namespace: "ebilanz" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-  };
+  return guideMetadata(locale, "/e-bilanz", t("metaTitle"), t("metaDescription"));
 }
 
-export default async function EBilanzPage() {
+export default async function EBilanzPage({ params }: { params: Promise<{ locale: string }> }) {
+  if ((await params).locale === "en") return <EnglishGuide guide={ebilanzGuide} />;
   const t = await getTranslations("ebilanz");
 
   const steps = [
