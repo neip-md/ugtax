@@ -20,6 +20,7 @@ export async function generateMetadata({
   // English page.
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
+    metadataBase: new URL("https://ugtax.de"),
     title: t("title"),
     description: t("description"),
     openGraph: {

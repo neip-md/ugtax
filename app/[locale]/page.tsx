@@ -1,8 +1,9 @@
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export default async function LandingPage() {
   const t = await getTranslations("landing");
+  const locale = await getLocale();
 
   const steps = [
     { step: "1", title: t("step1Title"), desc: t("step1Desc") },
@@ -307,6 +308,15 @@ export default async function LandingPage() {
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("guide3Desc")}</p>
           </Link>
+          {locale === "en" && [
+            { href: "/ug-tax-filing-checklist", title: "German UG tax filing checklist", description: "Annual accounts, tax returns and disclosure: what to prepare and where to file." },
+            { href: "/ug-with-no-revenue", title: "UG with no revenue", description: "What an inactive company still needs to check, prepare and file." },
+          ].map((guide) => (
+            <Link key={guide.href} href={guide.href} className="rounded border border-zinc-200 dark:border-zinc-800 p-5 space-y-1.5 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+              <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{guide.title} &rarr;</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">{guide.description}</p>
+            </Link>
+          ))}
         </div>
       </section>
 

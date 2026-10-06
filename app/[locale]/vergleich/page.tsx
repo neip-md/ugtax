@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { guideMetadata } from "@/app/seo";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
@@ -9,10 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "vergleich" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-  };
+  return guideMetadata(locale, "/vergleich", t("metaTitle"), t("metaDescription"));
 }
 
 export default async function VergleichPage() {

@@ -1,5 +1,6 @@
 "use client";
 
+import { ENGLISH_GUIDE_PATHS } from "@/app/seo";
 import { usePathname, Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -78,7 +79,7 @@ export function Header() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href={pathname}
+              href={ENGLISH_GUIDE_PATHS.includes(pathname) ? "/" : pathname}
               locale={nextLocale}
               className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
             >

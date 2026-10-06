@@ -1,3 +1,4 @@
+import { ENGLISH_GUIDE_PATHS } from "./app/seo";
 import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
@@ -9,6 +10,10 @@ export default async function middleware(request: NextRequest) {
   // Run locale routing first, then let Supabase refresh the session and write
   // any rotated auth cookies onto the same response.
   const response = intlMiddleware(request);
+  // These guides currently have no German equivalent.
+  if (ENGLISH_GUIDE_PATHS.some((path) => request.nextUrl.pathname === `/en${path}`)) {
+    response.headers.delete("link");
+  }
   return updateSession(request, response);
 }
 
