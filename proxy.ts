@@ -1,4 +1,4 @@
-import { ENGLISH_GUIDE_PATHS } from "./app/seo";
+import { ENGLISH_GUIDE_PATHS, isNoindexPath } from "./app/seo";
 import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
@@ -13,6 +13,11 @@ export default async function middleware(request: NextRequest) {
   // These guides currently have no German equivalent.
   if (ENGLISH_GUIDE_PATHS.some((path) => request.nextUrl.pathname === `/en${path}`)) {
     response.headers.delete("link");
+  }
+  // The tool pages are client components, so they cannot export metadata of
+  // their own; a header keeps them out of the index without restructuring.
+  if (isNoindexPath(request.nextUrl.pathname)) {
+    response.headers.set("X-Robots-Tag", "noindex, follow");
   }
   return updateSession(request, response);
 }

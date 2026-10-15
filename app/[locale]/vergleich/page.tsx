@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { guideMetadata } from "@/app/seo";
-import { getTranslations } from "next-intl/server";
+import { guideMetadata, guideStructuredData } from "@/app/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({
@@ -15,6 +16,7 @@ export async function generateMetadata({
 
 export default async function VergleichPage() {
   const t = await getTranslations("vergleich");
+  const locale = await getLocale();
 
   const rows: Array<[string, string, string, string]> = [
     [t("rowCost"), t("costUgtax"), t("costSteuerberater"), t("costEbilanz")],
@@ -32,6 +34,14 @@ export default async function VergleichPage() {
 
   return (
     <div className="max-w-3xl space-y-8 py-8">
+      <JsonLd
+        data={guideStructuredData({
+          locale,
+          path: "/vergleich",
+          title: t("h1"),
+          description: t("metaDescription"),
+        })}
+      />
       <h1 className="text-3xl font-semibold tracking-tight">{t("h1")}</h1>
 
       <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">{t("intro")}</p>
@@ -65,6 +75,13 @@ export default async function VergleichPage() {
           <li key={i}>{item}</li>
         ))}
       </ul>
+
+      <nav aria-label={locale === "de" ? "Weitere Ratgeber" : "Related guides"} className="space-y-3">
+        <h2 className="text-xl font-semibold">{locale === "de" ? "Weitere Ratgeber" : "Related guides"}</h2>
+        <p><Link href="/jahresabschluss" className="underline underline-offset-4">{locale === "de" ? "Holding-UG Jahresabschluss ohne Steuerberater" : "Holding UG annual accounts without a tax adviser"}</Link></p>
+        <p><Link href="/holding-ug-steuern" className="underline underline-offset-4">{locale === "de" ? "Holding-UG Steuern: KSt, GewSt und §8b KStG" : "Holding UG taxes: corporate tax, trade tax and §8b KStG"}</Link></p>
+        <p><Link href="/offenlegung" className="underline underline-offset-4">{locale === "de" ? "Jahresabschluss offenlegen: Unternehmensregister und Hinterlegung" : "Disclosing a UG's annual accounts"}</Link></p>
+      </nav>
 
       <div className="pt-4">
         <Link

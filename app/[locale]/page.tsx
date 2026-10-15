@@ -1,5 +1,8 @@
 import { Link } from "@/i18n/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+import { faqPage, ORGANIZATION, SITE_URL } from "@/app/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { guidesFor } from "@/content/guide-index";
 
 export default async function LandingPage() {
   const t = await getTranslations("landing");
@@ -18,8 +21,44 @@ export default async function LandingPage() {
   ] as const;
   const features = featureKeys.map((key) => t(key));
 
+  const faqs = [1, 2, 3, 4, 5, 6, 7].map((n) => ({ q: t(`faq${n}Q`), a: t(`faq${n}A`) }));
+
+  const home = locale === "de" ? SITE_URL : `${SITE_URL}/en`;
+  const meta = await getTranslations("meta");
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      ORGANIZATION,
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        url: home,
+        name: "UGtax",
+        inLanguage: locale,
+        publisher: { "@id": ORGANIZATION["@id"] },
+      },
+      {
+        "@type": "WebApplication",
+        "@id": `${SITE_URL}/#app`,
+        name: "UGtax",
+        url: `${home}/app`,
+        description: meta("description"),
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        inLanguage: ["de", "en"],
+        isAccessibleForFree: true,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+        license: "https://opensource.org/licenses/MIT",
+        featureList: features,
+        publisher: { "@id": ORGANIZATION["@id"] },
+      },
+      faqPage(faqs),
+    ],
+  };
+
   return (
     <div className="min-h-[80vh] flex flex-col">
+      <JsonLd data={structuredData} />
       {/* Hero */}
       <section className="flex-1 flex flex-col justify-center py-20">
         <div className="max-w-2xl">
@@ -135,19 +174,19 @@ export default async function LandingPage() {
                   <tr className="border-b border-zinc-50 dark:border-zinc-800/50">
                     <td className="px-4 py-2.5 text-zinc-700 dark:text-zinc-300">IHK Beitrag 2025</td>
                     <td className="px-4 py-2.5 text-red-500">-150,00</td>
-                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">6830 &mdash; Sonstige Abgaben</td>
+                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">6830 · Sonstige Abgaben</td>
                     <td className="px-4 py-2.5"><span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">{t("aiMockHigh")}</span></td>
                   </tr>
                   <tr className="border-b border-zinc-50 dark:border-zinc-800/50">
                     <td className="px-4 py-2.5 text-zinc-700 dark:text-zinc-300">Notar Dr. M&uuml;ller</td>
                     <td className="px-4 py-2.5 text-red-500">-892,50</td>
-                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">6827 &mdash; Rechts- und Beratungskosten</td>
+                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">6827 · Rechts- und Beratungskosten</td>
                     <td className="px-4 py-2.5"><span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">{t("aiMockHigh")}</span></td>
                   </tr>
                   <tr>
                     <td className="px-4 py-2.5 text-zinc-700 dark:text-zinc-300">STRIPE TRANSFER</td>
                     <td className="px-4 py-2.5 text-green-500">+2.340,00</td>
-                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">4400 &mdash; Erl&ouml;se</td>
+                    <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-400">4400 · Erl&ouml;se</td>
                     <td className="px-4 py-2.5"><span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">{t("aiMockMedium")}</span></td>
                   </tr>
                 </tbody>
@@ -308,14 +347,28 @@ export default async function LandingPage() {
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">{t("guide3Desc")}</p>
           </Link>
-          {locale === "en" && [
-            { href: "/ug-tax-filing-checklist", title: "German UG tax filing checklist", description: "Annual accounts, tax returns and disclosure: what to prepare and where to file." },
-            { href: "/ug-with-no-revenue", title: "UG with no revenue", description: "What an inactive company still needs to check, prepare and file." },
-          ].map((guide) => (
-            <Link key={guide.href} href={guide.href} className="rounded border border-zinc-200 dark:border-zinc-800 p-5 space-y-1.5 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+          {guidesFor(locale)
+            .filter((guide) => !["/jahresabschluss", "/vergleich", "/e-bilanz"].includes(guide.path))
+            .map((guide) => (
+            <Link key={guide.path} href={guide.path} className="rounded border border-zinc-200 dark:border-zinc-800 p-5 space-y-1.5 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
               <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{guide.title} &rarr;</h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">{guide.description}</p>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ: question headings with short answers, the shape answer engines quote. */}
+      <section className="py-16 border-t border-zinc-200 dark:border-zinc-800">
+        <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mb-8">
+          {t("faqTitle")}
+        </h2>
+        <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8">
+          {faqs.map((faq) => (
+            <div key={faq.q} className="space-y-2">
+              <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{faq.q}</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{faq.a}</p>
+            </div>
           ))}
         </div>
       </section>
