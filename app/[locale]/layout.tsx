@@ -8,6 +8,9 @@ import { routing } from "@/i18n/routing";
 import { Providers } from "../providers";
 import { HtmlShell } from "../shell";
 import { Header } from "./header";
+import { Link as LocaleLink } from "@/i18n/navigation";
+import { guidesFor } from "@/content/guide-index";
+import { ogImage } from "@/app/seo";
 
 export async function generateMetadata({
   params,
@@ -29,6 +32,13 @@ export async function generateMetadata({
       type: "website",
       locale: t("ogLocale"),
       siteName: "UGtax",
+      images: [ogImage(locale)],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("ogDescription"),
+      images: [ogImage(locale).url],
     },
     alternates: {
       canonical: locale === "de" ? "/" : `/${locale}`,
@@ -76,6 +86,16 @@ export default async function LocaleLayout({
             and Datenschutz links, so it has to be readable. */}
         <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-8 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
           <div className="max-w-5xl mx-auto space-y-3">
+            {/* Every guide linked from every page, so none is more than one
+                click from the homepage. */}
+            <nav aria-label={t("guides")} className="flex flex-wrap gap-x-4 gap-y-1 pb-2">
+              <span className="font-semibold text-zinc-700 dark:text-zinc-300">{t("guides")}:</span>
+              {guidesFor(locale).map((guide) => (
+                <LocaleLink key={guide.path} href={guide.path} className="underline hover:text-zinc-900 dark:hover:text-zinc-100">
+                  {guide.title}
+                </LocaleLink>
+              ))}
+            </nav>
             <p>
               <strong className="text-zinc-700 dark:text-zinc-300">{t("disclaimerTitle")}</strong>{" "}
               {t("disclaimerBody")}

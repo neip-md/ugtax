@@ -6,6 +6,11 @@ export type EnglishGuideContent = {
   sections: { id: string; title: string; paragraphs: string[]; items?: string[] }[];
   sources: { label: string; href: string }[];
   related: { label: string; href: string }[];
+  /** Shorter <title> when the headline is too long for a search result. */
+  metaTitle?: string;
+  /** ISO date of the last content change; defaults to GUIDE_UPDATED. */
+  updated?: string;
+  faqs?: { q: string; a: string }[];
 };
 
 const checklistLink = { href: "/ug-tax-filing-checklist", label: "German UG tax filing checklist" };
@@ -15,6 +20,7 @@ const accountsLink = { href: "/jahresabschluss", label: "Preparing your holding 
 
 export const filingChecklist: EnglishGuideContent = {
   path: checklistLink.href,
+  updated: "2026-10-07",
   title: "German UG tax filing checklist for founders",
   description: "What must a German UG file? An English checklist covering annual accounts, E-Bilanz, company tax returns, disclosure and records to prepare.",
   intro: "A German UG normally needs annual accounts, tax filings and a separate company-register disclosure. These are different tasks with different destinations. Use this checklist to gather your records, identify the filings that apply and keep evidence of each submission.",
@@ -59,6 +65,7 @@ export const filingChecklist: EnglishGuideContent = {
 
 export const noRevenueGuide: EnglishGuideContent = {
   path: noRevenueLink.href,
+  updated: "2026-10-07",
   title: "UG with no revenue: what do you still need to file?",
   description: "No sales does not mean no annual accounts. Learn what a dormant German UG still needs to check for bookkeeping, tax returns and company disclosure.",
   intro: "A German UG does not stop having accounting and filing obligations just because it has no revenue. Annual accounts and disclosure generally remain necessary, and tax filings must be checked separately. No sales, no transactions and no tax payable describe different situations.",
@@ -101,6 +108,7 @@ export const noRevenueGuide: EnglishGuideContent = {
 
 export const ebilanzGuide: EnglishGuideContent = {
   path: ebilanzLink.href,
+  updated: "2026-10-15",
   title: "E-Bilanz for a German UG: prepare, validate and submit",
   description: "Prepare your UG's E-Bilanz in XBRL, check the taxonomy and choose a submission route. Learn why Mein ELSTER cannot accept an E-Bilanz file upload.",
   intro: "An E-Bilanz is the structured electronic accounting dataset sent to the German tax administration. Preparing the accounts, generating an XBRL file and transmitting it are separate steps. UGtax helps prepare exports; submission needs compatible software or the self-hosted ERiC setup.",
@@ -119,7 +127,7 @@ export const ebilanzGuide: EnglishGuideContent = {
     },
     {
       id: "taxonomy", title: "Which taxonomy and software version do you need?",
-      paragraphs: ["The applicable taxonomy depends on the financial year and the tax administration's release and transition rules. Check the official E-Bilanz taxonomy publications and your transmission software's support for that year. The newest installed version is not, by itself, proof that the exported dataset is appropriate.", "Micro-company disclosure relief under §267a HGB is a separate question from E-Bilanz taxonomy support. There is no automatic exemption from the tax dataset merely because a company is small. Certain passive holding companies are also excluded from micro-company status under §267a(3) HGB."],
+      paragraphs: ["The applicable taxonomy depends on the financial year and the tax administration's release and transition rules. Check the official E-Bilanz taxonomy publications and your transmission software's support for that year. The newest installed version is not, by itself, proof that the exported dataset is appropriate.", "As of October 2026: for the 2025 financial year, taxonomy 6.8 is the default and 6.9 is also accepted; for 2026, 6.9 is the default and 6.10 is accepted. For financial years beginning after 31 December 2024, unaggregated account statements (Kontennachweise) are part of the dataset, and there is no reduced minimum scope for micro companies.", "Micro-company disclosure relief under §267a HGB is a separate question from E-Bilanz taxonomy support. There is no automatic exemption from the tax dataset merely because a company is small. Certain passive holding companies are also excluded from micro-company status under §267a(3) HGB."],
     },
     {
       id: "submission", title: "How can you submit an export prepared with UGtax?",

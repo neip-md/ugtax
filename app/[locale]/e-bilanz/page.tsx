@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { guideMetadata } from "@/app/seo";
 import { EnglishGuide } from "@/components/EnglishGuide";
 import { ebilanzGuide } from "@/content/english-guides";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { guideMetadata, guideStructuredData } from "@/app/seo";
+import { JsonLd } from "@/components/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -31,10 +32,21 @@ export default async function EBilanzPage({ params }: { params: Promise<{ locale
     { q: t("faq1Q"), a: t("faq1A") },
     { q: t("faq2Q"), a: t("faq2A") },
     { q: t("faq3Q"), a: t("faq3A") },
+    { q: t("faq4Q"), a: t("faq4A") },
   ];
 
   return (
     <div className="max-w-3xl space-y-8 py-8">
+      <JsonLd
+        data={guideStructuredData({
+          locale: "de",
+          path: "/e-bilanz",
+          title: t("h1"),
+          description: t("metaDescription"),
+          citations: ["https://www.gesetze-im-internet.de/estg/__5b.html", "https://www.esteuer.de/"],
+          faqs,
+        })}
+      />
       <h1 className="text-3xl font-semibold tracking-tight">{t("h1")}</h1>
 
       <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">{t("intro")}</p>

@@ -102,7 +102,9 @@ Anything unmatched goes to a review file for manual classification. Once classif
 The web app adds an optional third layer: if you supply your own API key, it
 asks a model to suggest accounts for whatever the first two layers missed, with
 a confidence level on each suggestion. Anthropic, OpenAI and Google models are
-supported, and any model id can be entered by hand. The key is used for that
+supported, plus open-weight models (DeepSeek, Mistral, gpt-oss and any other
+OpenRouter slug) via OpenRouter, routed only to zero-data-retention providers.
+Any model id can be entered by hand. The key is used for that
 request only and is never stored. Suggestions are proposals, not bookings: you
 confirm each one, and the pre-filing checks run regardless.
 

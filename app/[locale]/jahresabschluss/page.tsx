@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { guideMetadata } from "@/app/seo";
+import { guideMetadata, guideStructuredData } from "@/app/seo";
+import { JsonLd } from "@/components/JsonLd";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
@@ -29,6 +30,19 @@ export default async function JahresabschlussPage() {
 
   return (
     <div className="max-w-3xl space-y-8 py-8">
+      <JsonLd
+        data={guideStructuredData({
+          locale,
+          path: "/jahresabschluss",
+          title: t("h1"),
+          description: t("metaDescription"),
+          citations: [
+            "https://www.gesetze-im-internet.de/ustg_1980/__19.html",
+            "https://www.gesetze-im-internet.de/hgb/__325.html",
+            "https://www.gesetze-im-internet.de/hgb/__267a.html",
+          ],
+        })}
+      />
       <h1 className="text-3xl font-semibold tracking-tight">{t("h1")}</h1>
 
       <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">{t("intro")}</p>
@@ -65,6 +79,13 @@ export default async function JahresabschlussPage() {
         <h2 className="text-xl font-semibold">Next steps</h2>
         <p><Link href="/ug-tax-filing-checklist" className="underline underline-offset-4">Use the complete UG tax filing checklist</Link></p>
         <p><Link href="/ug-with-no-revenue" className="underline underline-offset-4">Check the requirements for a UG with no revenue</Link></p>
+        <p><Link href="/holding-ug-steuern" className="underline underline-offset-4">How the holding itself is taxed: §8b KStG and trade tax</Link></p>
+      </nav>}
+      {locale === "de" && <nav aria-label="Weitere Ratgeber" className="space-y-3">
+        <h2 className="text-xl font-semibold">Nächste Schritte</h2>
+        <p><Link href="/holding-ug-steuern" className="underline underline-offset-4">Wie die Holding besteuert wird: §8b KStG und Gewerbesteuer</Link></p>
+        <p><Link href="/offenlegung" className="underline underline-offset-4">Jahresabschluss im Unternehmensregister offenlegen</Link></p>
+        <p><Link href="/ug-ruecklage" className="underline underline-offset-4">Die 25-%-Rücklage nach §5a GmbHG bilden</Link></p>
       </nav>}
       <div className="pt-4">
         <Link

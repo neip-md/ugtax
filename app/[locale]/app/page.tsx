@@ -224,7 +224,10 @@ export default function UploadPage() {
                 className="w-full rounded border border-zinc-500 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-500"
               >
                 {modelsByProvider().map((group) => (
-                  <optgroup key={group.provider} label={PROVIDER_NAME[group.provider]}>
+                  <optgroup
+                    key={group.provider}
+                    label={group.provider === "openrouter" ? t("llmOpenSourceGroup") : PROVIDER_NAME[group.provider]}
+                  >
                     {group.models.map((m) => (
                       <option key={m.id} value={m.id}>
                         {t(m.labelKey)}
@@ -264,7 +267,7 @@ export default function UploadPage() {
                     type="text"
                     value={sessionStore.llmModel}
                     onChange={(e) => sessionStore.setLlmModel(e.target.value)}
-                    placeholder="gpt-5.6-sol"
+                    placeholder={llmProvider === "openrouter" ? "qwen/qwen3.8-27b" : "gpt-6.1-sol"}
                     className="w-full rounded border border-zinc-500 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-500"
                   />
                 </label>

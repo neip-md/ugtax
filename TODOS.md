@@ -2,9 +2,9 @@
 
 ## Verify each catalogued model with a real API call
 **What:** Run one real classification per provider against a live key and confirm the ids resolve and return parseable JSON.
-**Why:** The model ids and request shapes in `lib/models.ts` and `lib/llm-providers.ts` are verified against each provider's documentation and pinned by unit tests, but no request has ever been sent to OpenAI or Google from this code. A wrong id or a changed response shape would only surface for a user holding their own key.
+**Why:** The model ids and request shapes in `lib/models.ts` and `lib/llm-providers.ts` are verified against each provider's documentation and pinned by unit tests (`lib/__tests__/llm-providers.test.ts`), but no request has ever been sent to OpenAI, Google or OpenRouter from this code. For OpenRouter, also confirm the exact error returned when no zero-data-retention endpoint serves a model (documented as a 404, wording unverified). A wrong id or a changed response shape would only surface for a user holding their own key.
 **Context:** The custom-model field limits the damage: a bad id now returns the provider's own message ("The model `x` does not exist") rather than an empty result. Anthropic is the only path exercised end to end, via the SDK.
-**Added:** 2026-08-16
+**Added:** 2026-08-16 (OpenRouter added 2026-10-15)
 
 ## Re-check the model catalogue on a schedule
 **What:** Revisit `lib/models.ts` against each provider's model documentation, roughly quarterly.
@@ -12,9 +12,9 @@
 **Context:** The "other model (enter manually)" field means staleness degrades rather than breaks, so this is maintenance and not urgent. Worth pairing with a re-read of whether the token budget in `maxTokensFor` still clears the reasoning the current defaults do.
 **Added:** 2026-08-16
 
-## Local / self-hosted LLM endpoints (Ollama, LM Studio, OpenRouter)
-**What:** Let the user point the classification fallback at an OpenAI-compatible endpoint of their choosing, instead of only the three hosted providers.
-**Why:** A self-hoster running Ollama can classify without sending bank data to anyone. This is the remaining piece of the multi-provider work shipped on 2026-08-16.
+## Local / self-hosted LLM endpoints (Ollama, LM Studio, vLLM)
+**What:** Let the user point the classification fallback at an OpenAI-compatible endpoint of their choosing, instead of only the four hosted providers.
+**Why:** A self-hoster running Ollama can classify without sending bank data to anyone. Open-weight models are reachable from ugtax.de through OpenRouter since 2026-10-15, but that still sends the data to an inference provider; a local endpoint is the remaining piece.
 **Cons:** A caller-supplied base URL means the server fetches an arbitrary host, which on ugtax.de is server-side request forgery: an attacker could reach cloud metadata endpoints or anything else inside the deployment's network. That is why it was left out of the first pass.
 **Context:** `lib/llm-providers.ts` already speaks the OpenAI chat-completions shape, so the request code is done; the missing part is the guard. Likely shape: accept a base URL only when an env var opts the deployment in (off by default, so ugtax.de is unaffected and self-hosters get it with one setting), and still reject private and link-local addresses.
 **Added:** 2026-08-16

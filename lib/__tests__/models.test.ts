@@ -64,7 +64,19 @@ describe("model catalogue", () => {
   it("resolves a renamed id to its current one", () => {
     // The id persisted by sessions created before multi-provider support.
     expect(canonicalModelId("claude-haiku-4-5-20251001")).toBe("claude-haiku-4-5");
-    expect(providerForModel("claude-haiku-4-5-20251001")).toBe("anthropic");
+  });
+
+  it("does not swap a superseded model for its successor", () => {
+    // Haiku 4.5 left the catalogue, but a user who typed it keeps it.
+    expect(canonicalModelId("claude-haiku-4-5")).toBe("claude-haiku-4-5");
+    expect(findModel("claude-haiku-4-5")).toBeUndefined();
+  });
+
+  it("offers open-weight models through OpenRouter", () => {
+    const open = MODELS.filter((m) => m.provider === "openrouter");
+    expect(open.length).toBeGreaterThan(0);
+    // OpenRouter ids are vendor/model slugs; a bare id would 400 there.
+    for (const model of open) expect(model.id, model.id).toMatch(/^[a-z0-9-]+\/[a-z0-9.-]+$/);
   });
 
   it("leaves an unknown id alone and claims no provider for it", () => {

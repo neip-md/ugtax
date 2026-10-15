@@ -129,7 +129,7 @@ export default function PrivacyPage() {
       {/* 7. KI-Klassifizierung */}
       <section className="space-y-2">
         <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-          7. KI-Klassifizierung (Anthropic, OpenAI oder Google)
+          7. KI-Klassifizierung (Anthropic, OpenAI, Google oder OpenRouter)
         </h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
           Optional k&ouml;nnen Sie einen eigenen API-Key eingeben, um nicht erkannte Transaktionen
@@ -173,6 +173,22 @@ export default function PrivacyPage() {
               Datenschutzerkl&auml;rung
             </a>
             )
+          </li>
+          <li>
+            OpenRouter, Inc., 169 Madison Avenue, New York, NY 10016, USA (
+            <a
+              href="https://openrouter.ai/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-zinc-900 dark:hover:text-zinc-200"
+            >
+              Datenschutzerkl&auml;rung
+            </a>
+            ) f&uuml;r Open-Source-Modelle. OpenRouter leitet die Anfrage an einen
+            Inferenz-Anbieter des gew&auml;hlten Modells weiter. UGtax beschr&auml;nkt diese
+            Weiterleitung auf Anbieter mit Zero-Data-Retention-Zusage, die Eingaben weder
+            speichern noch zum Training verwenden; steht f&uuml;r ein Modell kein solcher Anbieter
+            zur Verf&uuml;gung, wird die Anfrage nicht ausgef&uuml;hrt.
           </li>
         </ul>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -264,7 +280,7 @@ export default function PrivacyPage() {
 
       <section className="space-y-2">
         <p className="text-xs text-zinc-400 dark:text-zinc-600">
-          Stand: M&auml;rz 2026
+          Stand: Oktober 2026
         </p>
       </section>
     </div>
