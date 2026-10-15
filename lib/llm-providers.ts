@@ -7,17 +7,21 @@
  * lib/llm.ts is unchanged.
  *
  * Anthropic goes through the official SDK, which is already a dependency.
- * OpenAI and Google go through their REST endpoints directly rather than
- * adding two more SDKs for one request shape each: both are a single POST
- * with a documented JSON body, and fewer dependencies is fewer things to
- * audit in a tool that handles bank data.
+ * OpenAI, Google and OpenRouter go through their REST endpoints directly
+ * rather than adding three more SDKs for one request shape each: each is a
+ * single POST with a documented JSON body, and fewer dependencies is fewer
+ * things to audit in a tool that handles bank data.
+ *
+ * OpenRouter is the open-weight route: one key reaches models such as
+ * DeepSeek, Mistral and gpt-oss, served by whichever inference provider
+ * OpenRouter picks.
  *
  * Endpoints are fixed constants. A caller-supplied base URL would let anyone
  * point the hosted deployment's server-side fetch at an arbitrary host, so
  * local and self-hosted OpenAI-compatible endpoints are deliberately absent.
  *
  * Endpoints and response shapes verified against each provider's own API
- * reference on 2026-08-16.
+ * reference on 2026-10-15.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -72,26 +76,51 @@ export async function callLlm(call: LlmCall): Promise<LlmReply> {
       return callOpenAi(call);
     case "google":
       return callGoogle(call);
+    case "openrouter":
+      return callOpenRouter(call);
   }
 }
 
 /**
+ * Models that accept a server-side fallback on a policy decline.
+ *
+ * With `fallbacks: "default"` the API re-runs a declined request on the model
+ * Anthropic recommends for that refusal category, inside the same call. Haiku
+ * 5.5 has no fallback, and an id typed into the custom field may predate the
+ * parameter, so it is only sent for the catalogued models that use it.
+ */
+const FALLBACK_MODELS = new Set(["claude-sonnet-5-5", "claude-opus-5-5", "claude-fable-5-1"]);
+
+/** Worded for the user, since a refusal otherwise looks like zero suggestions. */
+const REFUSAL_MESSAGE =
+  "Das Modell hat die Anfrage abgelehnt. Bitte ein anderes Modell wählen oder manuell klassifizieren.";
+
+/**
  * No thinking configuration on purpose.
  *
- * Adaptive thinking is on by default for Sonnet 5 and Opus 5 and permanently
- * on for Fable 5, which cannot be turned off at all. Every knob for tuning it
- * is model-specific and would 400 on the models that lack it, including any
- * id typed into the custom field, so the budget below carries the load
- * instead.
+ * Every current Claude model thinks by default, and Opus 5.5 and Fable 5.1
+ * cannot turn it off at all. Every knob for tuning it is model-specific and
+ * would 400 on the models that lack it, including any id typed into the
+ * custom field, so the budget below carries the load instead.
  */
 async function callAnthropic({ apiKey, model, prompt, maxTokens }: LlmCall): Promise<LlmReply> {
   const client = new Anthropic({ apiKey, timeout: TIMEOUT_MS, maxRetries: 1 });
   try {
-    const message = await client.messages.create({
+    const request = {
       model,
       max_tokens: maxTokens,
-      messages: [{ role: "user", content: prompt }],
-    });
+      messages: [{ role: "user" as const, content: prompt }],
+    };
+    const message = FALLBACK_MODELS.has(model)
+      ? await client.beta.messages.create({
+          ...request,
+          betas: ["server-side-fallback-2026-07-01"],
+          fallbacks: "default",
+        })
+      : await client.messages.create(request);
+    // A decline is an HTTP 200, so it has to be caught before the content is
+    // read: it carries no text, and would surface as an empty result.
+    if (message.stop_reason === "refusal") throw new LlmError(422, REFUSAL_MESSAGE);
     // Join every text block rather than reading content[0]: thinking models
     // put a thinking block first, and reading index 0 returned nothing.
     const text = message.content
@@ -156,11 +185,54 @@ async function callGoogle({ apiKey, model, prompt, maxTokens }: LlmCall): Promis
   const text = !Array.isArray(parts)
     ? ""
     : parts
+        // Thought summaries arrive as parts flagged `thought: true`; only the
+        // answer parts hold the JSON.
+        .filter((part) => pick(part, "thought") !== true)
         .map((part) => pick(part, "text"))
         .filter((value): value is string => typeof value === "string")
         .join("");
 
   return { text, truncated: pick(data, "candidates", 0, "finishReason") === "MAX_TOKENS" };
+}
+
+/**
+ * OpenRouter's OpenAI-compatible chat completions endpoint.
+ *
+ * `zdr: true` routes only to endpoints with a zero-data-retention policy, and
+ * `data_collection: "deny"` excludes providers that store or train on
+ * prompts. Bank transactions should not go anywhere else, and OpenRouter's
+ * default allows both. If no endpoint for the chosen model qualifies, the
+ * request fails (a 404 naming the model) instead of being sent elsewhere.
+ *
+ * Reasoning models put their thinking in `message.reasoning`, so `content`
+ * holds only the answer. The two attribution headers are optional and only
+ * name the app on OpenRouter's side.
+ */
+async function callOpenRouter({ apiKey, model, prompt, maxTokens }: LlmCall): Promise<LlmReply> {
+  const data = await postJson("https://openrouter.ai/api/v1/chat/completions", {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "HTTP-Referer": "https://ugtax.de",
+      "X-OpenRouter-Title": "UGtax",
+    },
+    body: {
+      model,
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: maxTokens,
+      provider: { zdr: true, data_collection: "deny" },
+    },
+  });
+
+  // A 200 can still carry an error instead of choices, for example when the
+  // upstream provider failed mid-request.
+  const error = pick(data, "error", "message");
+  if (typeof error === "string") throw new LlmError(502, error);
+
+  const content = pick(data, "choices", 0, "message", "content");
+  return {
+    text: typeof content === "string" ? content : "",
+    truncated: pick(data, "choices", 0, "finish_reason") === "length",
+  };
 }
 
 /** Walk a path into an unknown JSON value without asserting a shape onto it. */
@@ -201,7 +273,7 @@ async function postJson(
   }
 
   if (!res.ok) {
-    // Both OpenAI and Google report failures as {"error": {"message": ...}},
+    // OpenAI, Google and OpenRouter all report failures as {"error": {"message": ...}},
     // and that message is the only thing that says *why* (unknown model,
     // billing, region). Passing it through is the difference between a
     // fixable error and a shrug.

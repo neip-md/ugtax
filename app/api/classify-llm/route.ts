@@ -36,9 +36,10 @@ export const maxDuration = 60;
  * a tool whose only feature is being right.
  *
  * The floor is large because every current frontier model reasons before it
- * answers and those tokens come out of this same budget: Claude Fable 5
- * always thinks, Sonnet 5 and Opus 5 think by default, and the GPT-5.6 and
- * Gemini 3.x families reason too. A ceiling sized for the answer alone would
+ * answers and those tokens come out of this same budget: every current
+ * Claude model thinks by default (Opus 5.5 and Fable 5.1 always do), GPT-6
+ * and Gemini 3.8/4 reason too, and so do most open-weight models on
+ * OpenRouter. A ceiling sized for the answer alone would
  * be spent before the first suggestion. It is only a cap, so the headroom is
  * free unless the model uses it.
  */
